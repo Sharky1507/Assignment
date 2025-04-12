@@ -1,15 +1,46 @@
---  query to return all users who have made more than 3 orders in the last 90 days, along with their total spend. 
+
+-- Query 1: Users with more than 3 orders in the last 90 days and their total spend
 SELECT 
-    p.customer_id,
-    SUM(p.amount) AS total_spent,
-    m.membership_level
+    u.user_id, 
+    u.name, 
+    COUNT(o.order_id) AS total_orders, 
+    SUM(o.amount) AS total_spend
 FROM 
-    purchases p
-INNER JOIN 
-    members m ON p.customer_id = m.customer_id
+    users u
+JOIN 
+    orders o ON u.user_id = o.user_id
 WHERE 
-    m.membership_level = 'Gold'
+    o.order_date >= DATEADD(DAY, -90, GETDATE())
 GROUP BY 
-    p.customer_id, m.membership_level
+    u.user_id, u.name
 HAVING 
-    SUM(p.amount) > 250;
+    COUNT(o.order_id) > 3;
+
+-- Query 2: Missing hourly readings in the past 24 hours for each sensor
+WITH hourly_intervals AS (
+    SELECT 
+        sensor_id, 
+        DATEADD(HOUR, n, DATEADD(HOUR, -24, GETDATE())) AS expected_timestamp
+    FROM 
+        sensor_logs
+    CROSS JOIN 
+        (SELECT TOP 24 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS n FROM master.dbo.spt_values) AS numbers
+),
+missing_readings AS (
+    SELECT 
+        h.sensor_id, 
+        h.expected_timestamp
+    FROM 
+        hourly_intervals h
+    LEFT JOIN 
+        sensor_logs s ON h.sensor_id = s.sensor_id AND h.expected_timestamp = s.timestamp
+    WHERE 
+        s.timestamp IS NULL
+)
+SELECT 
+    sensor_id, 
+    expected_timestamp
+FROM 
+    missing_readings
+ORDER BY 
+    sensor_id, expected_timestamp;
