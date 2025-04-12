@@ -12,7 +12,7 @@
 - **members.csv**: Assignment dataset containing membership details.
 - **vip_customers.csv**: Output file containing identified VIP customers.
 - **sql.txt** : Contains query to return all users who have made more than 3 orders in the last 90 
-days, along with their total spend. 
+days, along with their total spend and query to find any missing hourly readings in the past 24 hours for each sensor. 
 - **sql2.txt**: Contains the SQL query for identifying VIP customers.
 
 ## How to Run the Python Script
