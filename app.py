@@ -22,14 +22,11 @@ def transform_data(df):
     if df is None or df.empty:
         return None
     
-    # Keep track of initial record count
     initial_count = len(df)
     
-    # Remove reviews with null rating or review_text
     df = df.dropna(subset=['rating', 'review_text'])
     print(f"Removed {initial_count - len(df)} records with null rating or review_text")
     
-    # Convert rating to integer
     try:
         df['rating'] = pd.to_numeric(df['rating'], errors='coerce')
         df = df.dropna(subset=['rating'])
@@ -38,12 +35,10 @@ def transform_data(df):
         print(f"Error converting ratings to integers: {e}")
         return None
     
-    # Filter out ratings < 1 or > 5
     valid_ratings_count = len(df)
     df = df[(df['rating'] >= 1) & (df['rating'] <= 5)]
     print(f"Removed {valid_ratings_count - len(df)} records with invalid ratings")
     
-    # Extract sentiment based on presence of "bad" in review text
     df['sentiment'] = df['review_text'].str.contains('bad', case=False).map({True: 'Negative', False: 'Positive'})
     
     print(f"Transformation complete. Final record count: {len(df)}")
@@ -85,24 +80,20 @@ def main():
     
     print("Starting ETL pipeline...")
     
-    # Extract
     print("\n--- Extract phase ---")
     df = extract_data(args.input)
     if df is None:
         print("Extract phase failed. Exiting pipeline.")
         sys.exit(1)
     
-    # Transform
     print("\n--- Transform phase ---")
     transformed_df = transform_data(df)
     if transformed_df is None:
         print("Transform phase failed. Exiting pipeline.")
         sys.exit(1)
     
-    # Load
     print("\n--- Load phase ---")
     
-    # Ensure output file has the correct extension
     output_path = args.output
     if not output_path.lower().endswith(f'.{args.format}'):
         base, _ = os.path.splitext(output_path)
