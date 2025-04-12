@@ -1,6 +1,6 @@
 # VIP Customer Identification
 
-## This code helps in finding: 
+## This code helps in finding people who: 
 
 1. Made total purchases over $250 across all transactions.
 2. Are Gold members.
