@@ -1,6 +1,6 @@
 # VIP Customer Identification
 
-This project identifies VIP customers based on their purchase behavior and membership status. It processes two datasets (`purchases.csv` and `members.csv`) to find customers who:
+- This code helps in finding: 
 
 1. Made total purchases over $250 across all transactions.
 2. Are Gold members.
