@@ -1,0 +1,16 @@
+-- SQL Query to identify VIP customers who:
+-- 1. Made total purchases over $250 across all transactions.
+-- 2. Are Gold members.
+
+SELECT 
+    p.customer_id, 
+    SUM(p.amount) as total_spent, 
+    m.membership_level
+FROM 
+    purchases p
+INNER JOIN 
+    members m ON p.customer_id = m.customer_id
+GROUP BY 
+    p.customer_id, m.membership_level
+HAVING 
+    SUM(p.amount) > 250 AND m.membership_level = 'Gold';
