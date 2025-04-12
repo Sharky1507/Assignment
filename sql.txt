@@ -1,4 +1,3 @@
-
 -- Query 1: Users with more than 3 orders in the last 90 days and their total spend
 SELECT 
     u.user_id, 
@@ -10,37 +9,26 @@ FROM
 JOIN 
     orders o ON u.user_id = o.user_id
 WHERE 
-    o.order_date >= DATEADD(DAY, -90, GETDATE())
+    o.order_date >= '2025-01-12'
 GROUP BY 
     u.user_id, u.name
 HAVING 
     COUNT(o.order_id) > 3;
 
 -- Query 2: Missing hourly readings in the past 24 hours for each sensor
-WITH hourly_intervals AS (
-    SELECT 
-        sensor_id, 
-        DATEADD(HOUR, n, DATEADD(HOUR, -24, GETDATE())) AS expected_timestamp
-    FROM 
-        sensor_logs
-    CROSS JOIN 
-        (SELECT TOP 24 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS n FROM master.dbo.spt_values) AS numbers
-),
-missing_readings AS (
-    SELECT 
-        h.sensor_id, 
-        h.expected_timestamp
-    FROM 
-        hourly_intervals h
-    LEFT JOIN 
-        sensor_logs s ON h.sensor_id = s.sensor_id AND h.expected_timestamp = s.timestamp
-    WHERE 
-        s.timestamp IS NULL
-)
 SELECT 
-    sensor_id, 
-    expected_timestamp
+    s.sensor_id, 
+    DATEADD(HOUR, n, DATEADD(HOUR, -24, GETDATE())) AS expected_timestamp
 FROM 
-    missing_readings
+    (SELECT DISTINCT sensor_id FROM sensor_logs) s
+CROSS JOIN 
+    (SELECT TOP 24 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 AS n FROM master.dbo.spt_values) AS numbers
+WHERE 
+    NOT EXISTS (
+        SELECT 1 
+        FROM sensor_logs l
+        WHERE l.sensor_id = s.sensor_id 
+          AND l.timestamp = DATEADD(HOUR, n, DATEADD(HOUR, -24, GETDATE()))
+    )
 ORDER BY 
-    sensor_id, expected_timestamp;
+    s.sensor_id, expected_timestamp;
