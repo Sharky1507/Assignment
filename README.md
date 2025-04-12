@@ -8,8 +8,8 @@ This project identifies VIP customers based on their purchase behavior and membe
 ## Files in the Repository
 
 - **app2.py**: Python script to identify VIP customers.
-- **purchases.csv**: Sample dataset containing purchase transactions.
-- **members.csv**: Sample dataset containing membership details.
+- **purchases.csv**: Assignment dataset containing purchase transactions.
+- **members.csv**: Assignment dataset containing membership details.
 - **vip_customers.csv**: Output file containing identified VIP customers.
 - **sql.txt**: Contains the SQL query for identifying VIP customers.
 
@@ -25,12 +25,7 @@ This project identifies VIP customers based on their purchase behavior and membe
 
 ### Steps
 
-1. Clone the repository or download the files.
-2. Open a terminal and navigate to the project directory:
-   ```bash
-   cd "c:\Users\Kafee\Downloads\Cloud assiignment"
-   ```
-3. Run the script using the following command:
+1. Run the script using the following command:
    ```bash
    python app2.py --purchases purchases.csv --members members.csv --output vip_customers.csv
    ```
@@ -60,7 +55,3 @@ The script generates an output file (e.g., `vip_customers.csv`) containing the f
 - `customer_id`: ID of the VIP customer.
 - `total_spent`: Total amount spent by the customer.
 - `membership_level`: Membership level of the customer.
-
-## License
-
-This project is licensed under the MIT License.
