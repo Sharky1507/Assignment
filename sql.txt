@@ -1,3 +1,4 @@
+--  query to return all users who have made more than 3 orders in the last 90 days, along with their total spend. 
 SELECT 
     p.customer_id,
     SUM(p.amount) AS total_spent,
